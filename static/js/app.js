@@ -8,6 +8,7 @@ let appState = {
 
 // DOM Elements
 const btnRefresh = document.getElementById('btnRefresh');
+const btnExport = document.getElementById('btnExport');
 const statusInfo = document.getElementById('statusInfo');
 const searchInput = document.getElementById('searchInput');
 const filtersContainer = document.getElementById('filtersContainer');
@@ -33,6 +34,11 @@ function setupEventListeners() {
     // Refresh button
     btnRefresh.addEventListener('click', () => {
         fetchNotes(true);
+    });
+
+    // Export CSV button
+    btnExport.addEventListener('click', () => {
+        exportFilteredNotesToCSV();
     });
 
     // Search input
@@ -293,19 +299,33 @@ function renderNotes() {
                         <line x1="10" y1="14" x2="21" y2="3"></line>
                     </svg>
                 </a>
-                <button class="btn-tweet" data-index="${index}">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-                    </svg>
-                    Tweet
-                </button>
+                <div class="card-actions">
+                    <button class="btn-copy" data-index="${index}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy
+                    </button>
+                    <button class="btn-tweet" data-index="${index}">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                        </svg>
+                        Tweet
+                    </button>
+                </div>
             </div>
         `;
 
-        // Tweet button handler
+        // Event handlers
         const btnTweet = card.querySelector('.btn-tweet');
         btnTweet.addEventListener('click', () => {
             openTweetModal(note);
+        });
+
+        const btnCopy = card.querySelector('.btn-copy');
+        btnCopy.addEventListener('click', () => {
+            copyNoteToClipboard(note, btnCopy);
         });
 
         feedGrid.appendChild(card);
@@ -397,4 +417,87 @@ function updateCharCount() {
     } else {
         btnPostTweet.disabled = finalLength === 0;
     }
+}
+
+// Copy note content to clipboard
+function copyNoteToClipboard(note, btnElement) {
+    const textToCopy = `BigQuery ${note.type} Update (${note.date})\n\nDescription:\n${note.content_text}\n\nOriginal Source: ${note.link}`;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        // Dynamic toast feedback
+        alertNotification('Copied to clipboard!', 'success');
+        
+        // Button visual feedback
+        const originalHTML = btnElement.innerHTML;
+        btnElement.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Copied!
+        `;
+        btnElement.classList.add('copied');
+        
+        setTimeout(() => {
+            btnElement.innerHTML = originalHTML;
+            btnElement.classList.remove('copied');
+        }, 2000);
+    }).catch(err => {
+        console.error('Could not copy text: ', err);
+        alertNotification('Failed to copy to clipboard', 'error');
+    });
+}
+
+// Get the current filtered notes list
+function getFilteredNotes() {
+    return appState.notes.filter(note => {
+        const matchesFilter = appState.activeFilter === 'all' || 
+                             note.type.toLowerCase() === appState.activeFilter.toLowerCase();
+        
+        const matchesSearch = !appState.searchQuery || 
+                              note.type.toLowerCase().includes(appState.searchQuery) ||
+                              note.date.toLowerCase().includes(appState.searchQuery) ||
+                              note.content_text.toLowerCase().includes(appState.searchQuery);
+                              
+        return matchesFilter && matchesSearch;
+    });
+}
+
+// Export the filtered notes as CSV
+function exportFilteredNotesToCSV() {
+    const notesToExport = getFilteredNotes();
+    
+    if (notesToExport.length === 0) {
+        alertNotification('No notes available to export', 'warning');
+        return;
+    }
+    
+    // CSV Header
+    let csvContent = "Date,Type,Description,Link\r\n";
+    
+    // CSV rows
+    notesToExport.forEach(note => {
+        // Escape double quotes in description and type
+        const dateEscaped = `"${note.date.replace(/"/g, '""')}"`;
+        const typeEscaped = `"${note.type.replace(/"/g, '""')}"`;
+        const textEscaped = `"${note.content_text.replace(/"/g, '""')}"`;
+        const linkEscaped = `"${note.link.replace(/"/g, '""')}"`;
+        
+        csvContent += `${dateEscaped},${typeEscaped},${textEscaped},${linkEscaped}\r\n`;
+    });
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    
+    const filterName = appState.activeFilter !== 'all' ? `_${appState.activeFilter}` : '';
+    link.setAttribute("download", `bigquery_release_notes${filterName}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    alertNotification(`Exported ${notesToExport.length} items to CSV!`, 'success');
 }

@@ -161,6 +161,27 @@ header {
     animation: spin 1s linear infinite;
 }
 
+/* Header Action Layouts */
+.header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-secondary {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.btn-secondary:hover {
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
 /* Cache Status Toast */
 .status-info {
     font-size: 12px;
@@ -409,6 +430,48 @@ header {
 }
 
 .btn-original svg {
+    width: 14px;
+    height: 14px;
+}
+
+
+
+/* Card Actions Flexbox */
+.card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Copy Button Styling */
+.btn-copy {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-copy:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.btn-copy.copied {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.btn-copy svg {
     width: 14px;
     height: 14px;
 }
@@ -667,13 +730,25 @@ header {
         padding-top: 24px;
     }
     
-    .btn-refresh {
+    .header-actions {
         width: 100%;
+        align-items: stretch;
+    }
+    
+    .header-buttons {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+    }
+    
+    .header-buttons .btn-refresh {
+        flex: 1;
         justify-content: center;
     }
     
     .status-info {
         text-align: left;
+        margin-top: 8px;
     }
     
     .controls-bar {
