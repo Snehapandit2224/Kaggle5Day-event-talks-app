@@ -9,6 +9,7 @@ let appState = {
 // DOM Elements
 const btnRefresh = document.getElementById('btnRefresh');
 const btnExport = document.getElementById('btnExport');
+const themeToggle = document.getElementById('themeToggle');
 const statusInfo = document.getElementById('statusInfo');
 const searchInput = document.getElementById('searchInput');
 const filtersContainer = document.getElementById('filtersContainer');
@@ -25,6 +26,7 @@ const btnPostTweet = document.getElementById('btnPostTweet');
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     fetchNotes();
     setupEventListeners();
 });
@@ -39,6 +41,11 @@ function setupEventListeners() {
     // Export CSV button
     btnExport.addEventListener('click', () => {
         exportFilteredNotesToCSV();
+    });
+
+    // Theme toggle button
+    themeToggle.addEventListener('click', () => {
+        toggleTheme();
     });
 
     // Search input
@@ -500,4 +507,23 @@ function exportFilteredNotesToCSV() {
     document.body.removeChild(link);
     
     alertNotification(`Exported ${notesToExport.length} items to CSV!`, 'success');
+}
+
+// Initialize theme from local storage
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+    }
+}
+
+// Toggle light/dark theme
+function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    
+    alertNotification(
+        `Switched to ${isLight ? 'Light' : 'Dark'} Mode`,
+        'success'
+    );
 }

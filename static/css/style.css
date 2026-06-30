@@ -50,6 +50,41 @@
     --glass-blur: blur(12px);
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Modal & Input Variables (Dark Default) */
+    --modal-bg: #111827;
+    --modal-border: rgba(255, 255, 255, 0.08);
+    --textarea-bg: rgba(255, 255, 255, 0.02);
+    --textarea-border: rgba(255, 255, 255, 0.08);
+    --search-bg: rgba(255, 255, 255, 0.03);
+    --search-border: rgba(255, 255, 255, 0.08);
+}
+
+/* Light Mode Overrides */
+body.light-mode {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(148, 163, 184, 0.18);
+    --card-border-hover: rgba(59, 130, 246, 0.4);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+
+    --modal-bg: #ffffff;
+    --modal-border: rgba(15, 23, 42, 0.08);
+    --textarea-bg: rgba(15, 23, 42, 0.02);
+    --textarea-border: rgba(15, 23, 42, 0.08);
+    --search-bg: rgba(255, 255, 255, 0.85);
+    --search-border: rgba(148, 163, 184, 0.25);
+    
+    --primary-glow: rgba(59, 130, 246, 0.08);
+    
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.04) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
 }
 
 * {
@@ -219,11 +254,11 @@ header {
 
 .search-input {
     width: 100%;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--search-bg);
+    border: 1px solid var(--search-border);
     border-radius: 10px;
     padding: 12px 16px 12px 42px;
-    color: white;
+    color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 14px;
     outline: none;
@@ -232,7 +267,7 @@ header {
 
 .search-input:focus {
     border-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--search-bg);
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
@@ -581,12 +616,12 @@ header {
 }
 
 .modal-content {
-    background: #111827;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--modal-bg);
+    border: 1px solid var(--modal-border);
     width: 100%;
     max-width: 550px;
     border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
     transform: scale(0.95);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
@@ -601,7 +636,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--modal-border);
 }
 
 .modal-title {
@@ -653,11 +688,11 @@ header {
 .tweet-textarea {
     width: 100%;
     height: 150px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--textarea-bg);
+    border: 1px solid var(--textarea-border);
     border-radius: 12px;
     padding: 16px;
-    color: white;
+    color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.5;
@@ -668,7 +703,7 @@ header {
 
 .tweet-textarea:focus {
     border-color: var(--twitter-color);
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--textarea-bg);
     box-shadow: 0 0 15px var(--twitter-glow);
 }
 
@@ -771,4 +806,35 @@ header {
     .filter-chip {
         flex-shrink: 0;
     }
+}
+
+/* Theme Toggle Button Styling */
+.btn-theme {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.btn-theme svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Toggle Sun/Moon display depending on body class */
+body.light-mode .icon-moon {
+    display: none !important;
+}
+
+body.light-mode .icon-sun {
+    display: block !important;
+}
+
+body:not(.light-mode) .icon-moon {
+    display: block !important;
+}
+
+body:not(.light-mode) .icon-sun {
+    display: none !important;
 }
