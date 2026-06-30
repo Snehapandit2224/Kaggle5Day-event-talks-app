@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BigQuery Release Notes Tracker - Fetch and share the latest updates on Google Cloud BigQuery.">
+    <title>BigQuery Release Notes Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M3 5V19A9 3 0 0 0 21 19V5"></path>
+                        <path d="M3 12A9 3 0 0 0 21 12"></path>
+                    </svg>
+                </div>
+                <div class="title-area">
+                    <h1>BigQuery Release Notes</h1>
+                    <p>Track, filter, and share the latest updates for Google Cloud BigQuery</p>
+                </div>
+            </div>
+            <div>
+                <button id="btnRefresh" class="btn-refresh">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                    </svg>
+                    <span>Refresh</span>
+                </button>
+                <div id="statusInfo" class="status-info">Last updated: -</div>
+            </div>
+        </header>
+
+        <!-- Search and Filters Control Bar -->
+        <div class="controls-bar">
+            <div class="search-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search release notes by keyword...">
+            </div>
+            
+            <div class="filters-wrapper" id="filtersContainer">
+                <button class="filter-chip active" data-type="all">All Updates</button>
+                <button class="filter-chip" data-type="feature">Features</button>
+                <button class="filter-chip" data-type="change">Changes</button>
+                <button class="filter-chip" data-type="deprecation">Deprecations</button>
+                <button class="filter-chip" data-type="fix">Fixes</button>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingState" class="loading-container">
+            <div class="spinner"></div>
+            <div class="loading-text">Fetching latest release notes from Google Cloud...</div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <h3>No release notes found</h3>
+            <p>Try adjusting your search query or filter tags.</p>
+        </div>
+
+        <!-- Feed Grid -->
+        <main id="feedGrid" class="feed-grid" style="display: none;">
+            <!-- Dynamic cards will be loaded here -->
+        </main>
+    </div>
+
+    <!-- Tweet Composer Modal -->
+    <div id="tweetModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                    </svg>
+                    <span>Post Update to X</span>
+                </div>
+                <button id="modalClose" class="modal-close" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tweet-textarea-wrapper">
+                    <textarea id="tweetTextarea" class="tweet-textarea" spellcheck="false" placeholder="What's happening?"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <div id="charCounter" class="char-counter">0 / 280</div>
+                    <button id="btnPostTweet" class="btn-post-tweet">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
